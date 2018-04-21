@@ -8,37 +8,35 @@
                 ca = parseInt(document.estilo.c7.value)+parseInt(document.estilo.c11.value)+parseInt(document.estilo.c15.value)+parseInt(document.estilo.c19.value)+parseInt(document.estilo.c31.value)+parseInt(document.estilo.c35.value);
                 ea = parseInt(document.estilo.c4.value)+parseInt(document.estilo.c12.value)+parseInt(document.estilo.c24.value)+parseInt(document.estilo.c28.value)+parseInt(document.estilo.c32.value)+parseInt(document.estilo.c36.value);
                 caec = ca-ec;
-                eaor = ea-or;	
-                if (eaor>2)
-                        {
-                        if (caec>2)
-                        {
-                                estilo="convergente";
-                        }
-                        else
-                        {
-                                estilo="acomodador";
-                        } 
-                        }
-                else
-                        {
-                        if (caec>2)
-                        {
-                                estilo="asimilador";
-                        }
-                        else
-                        {
-                                estilo="divergente";
-                        }
-                        } 
-                document.final.EC.value = ec;
-                document.final.RO.value = or;
-                document.final.CA.value = ca;
-                document.final.EA.value = ea;
-                document.final.CAEC.value = caec;
-                document.final.EAOR.value = eaor;
-                document.final.ESTILOFINAL.value = estilo;
-                }
+                eaor = ea-or;
+
+                post('/ejercicio_1/consultar/', {caec: caec, eaor: eaor});
+}
+
+function post(path, params, method) {
+method = method || "post"; // Set method to post by default if not specified.
+
+// The rest of this code assumes you are not using a library.
+// It can be made less wordy if you use one.
+var form = document.createElement("form");
+form.setAttribute("method", method);
+form.setAttribute("action", path);
+
+for(var key in params) {
+if(params.hasOwnProperty(key)) {
+var hiddenField = document.createElement("input");
+hiddenField.setAttribute("type", "hidden");
+hiddenField.setAttribute("name", key);
+hiddenField.setAttribute("value", params[key]);
+
+form.appendChild(hiddenField);
+}
+}
+
+document.body.appendChild(form);
+form.submit();
+}	
+               
         </script>
 
         <h1>Ejercicio 1</h1>
@@ -75,6 +73,8 @@
         <big><big><br>
         Yo aprendo...</big></big>
         <form name="estilo">
+        {{ csrf_field() }} 
+
                 <table style="text-align: left; width: 100%;" border="1" cellpadding="2" cellspacing="2">
                 <tbody>
                 <tr>
@@ -392,26 +392,8 @@
                 <font color="#ff0000"><font size="4"> ------------------</font></font><input value="CALCULAR" onclick="calcular()" type="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </form>
 
-        <form name="final" action="estilo.php" method="post">
-                <input name="EC" maxlength="12" size="12" type="hidden" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input name="RO" maxlength="12" size="12" type="hidden" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-                <input name="CA" maxlength="12" size="12" type="hidden" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-                <input name="EA" maxlength="12" size="12" type="hidden" ><br>
-
-                <input type="hidden" maxlength="3" size="3" name="CAEC">&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="hidden" maxlength="3" size="3" name="EAOR">&nbsp;<br><br>
-
-                ESTILO&nbsp;&nbsp; <input maxlength="12" size="12" name="ESTILOFINAL">
-                <br>
-                Escriba su carnet:<input type="Text" name="carnet"><br>
-                Sexo:<select name="sex" value="Sexo">
-                        <option value="f">Femenino</option>
-                        <option value="m">Masculino</option>
-                        </select><br>
-                Escoja su recinto:<select name="recinto" value="Recinto">
-                        <option value="p">Paraíso</option>
-                        <option value="t">Turrialba</option>
-                        </select><br>
-                <font color="#ff0000"><font size="4"> -------------------------------------------------</font></font><input value="ENVIAR" type="submit">
-        </form>
+        
+        <form name="resultado">
+            Resultado:<input name="txt_resultado" value="@if (!empty($resultado)){{ $resultado }}@endif">
+</form>
 @endsection
